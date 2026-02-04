@@ -10,7 +10,7 @@ To accommodate the multiple models in the pipeline (YOLOv7 for component detecti
 
 In Pascal VOC format, the information regarding the circuit and its components are stored in the following format as shown by the example below:
 
-\begin{lstlisting}[language=XML, caption={Sample Pascal VOC Annotation Format}, label={lst:pascal-voc-example}]
+\begin{lstlisting}[language=XML, frame=none, numbers=none, backgroundcolor=, basicstyle=\ttfamily\fontsize{12}{14}\selectfont, label={lst:pascal-voc-example}]
 <annotation>
     <folder>images</folder>
     <filename>C1_D1_P2.jpg</filename>
@@ -129,7 +129,7 @@ The pseudocode for the conversion of Pascal VOC format to \gls{ocr}-compatible \
 
 After this script is run in its entirety, a file in \gls{lmdb} format, as is expected by \gls{ocr}, is received as shown in the example below:
 
-\begin{lstlisting}[caption={Sample LMDB Database Output Format}, label={lst:lmdb-example}]
+\begin{lstlisting}[frame=none, numbers=none, backgroundcolor=, basicstyle=\ttfamily\fontsize{12}{14}\selectfont, label={lst:lmdb-example}]
 Key: b'image-00001'
 Value: b'\xff\xd8\xff\xe0\x00\x10JFIF...' (JPEG binary data)
 
@@ -276,23 +276,35 @@ The following table summarizes the key endpoints exposed by the backend \gls{api
     \centering
     \caption{Endpoints Used in the Web Application}
     \label{table:api-endpoints}
-    \begin{tabularx}{\textwidth}{>{\bfseries}l>{\bfseries}X>{\raggedright\arraybackslash}X}
-        \toprule
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{|p{1.2cm}|p{4cm}|p{4cm}|}
+        \hline
         \textbf{HTTP Method} & \textbf{Endpoint} & \textbf{Functionality} \\
-        \midrule
-        GET & /api/v1/ & Returns basic \gls{api} information and available documentation links (health check) \\
-        POST & /api/v1/simulation/simulate & Submits a \gls{spice} netlist and initiates a circuit simulation \\
-        POST & /api/v1/simulation/validate & Validates the syntax and structure of a \gls{spice} netlist without running simulation \\
+        \hline
+        GET & /api/v1/ & Returns basic API information and available documentation links (health check) \\
+        \hline
+        POST & /api/v1/simulation/simulate & Submits a SPICE netlist and initiates a circuit simulation \\
+        \hline
+        POST & /api/v1/simulation/validate & Validates the syntax and structure of a SPICE netlist without running simulation \\
+        \hline
         GET & /api/v1/simulation/\{simulation\_id\}/status & Retrieves the current status and progress of a specific simulation \\
+        \hline
         GET & /api/v1/simulation/\{simulation\_id\}/results & Fetches completed simulation results including voltage, current, and time data \\
+        \hline
         POST & /api/v1/simulation/\{simulation\_id\}/stop & Stops a currently running simulation \\
+        \hline
         GET & /api/v1/simulation/ & Lists all simulations with their statuses and creation timestamps \\
+        \hline
         DELETE & /api/v1/simulation/\{simulation\_id\} & Deletes a simulation and its associated results \\
-        GET & /api/v1/docs & Provides interactive Swagger \gls{ui} for \gls{api} exploration \\
-        GET & /api/v1/redoc & Provides ReDoc-based \gls{api} documentation \\
-        GET & /api/v1/openapi.json & Returns OpenAPI specification in \gls{json} format \\
-        \bottomrule
-    \end{tabularx}
+        \hline
+        GET & /api/v1/docs & Provides interactive Swagger UI for API exploration \\
+        \hline
+        GET & /api/v1/redoc & Provides ReDoc-based API documentation \\
+        \hline
+        GET & /api/v1/openapi.json & Returns OpenAPI specification in JSON format \\
+        \hline
+    \end{tabular}
 \end{table}
 
 \subsection{Frontend-Backend Interaction}

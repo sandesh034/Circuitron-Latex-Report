@@ -867,7 +867,7 @@ To accommodate the multiple models in the pipeline (YOLOv7 for component detecti
 
 In Pascal VOC format, the information regarding the circuit and its components are stored in the following format as shown by the example below:
 
-\begin{lstlisting}[language=XML, caption={Sample Pascal VOC Annotation Format}, label={lst:pascal-voc-example}]
+\begin{lstlisting}[language=XML, frame=none, numbers=none, backgroundcolor=, basicstyle=\ttfamily\fontsize{12}{14}\selectfont, label={lst:pascal-voc-example}]
 <annotation>
     <folder>images</folder>
     <filename>C1_D1_P2.jpg</filename>
@@ -986,7 +986,7 @@ The pseudocode for the conversion of Pascal VOC format to \gls{ocr}-compatible \
 
 After this script is run in its entirety, a file in \gls{lmdb} format, as is expected by \gls{ocr}, is received as shown in the example below:
 
-\begin{lstlisting}[caption={Sample LMDB Database Output Format}, label={lst:lmdb-example}]
+\begin{lstlisting}[frame=none, numbers=none, backgroundcolor=, basicstyle=\ttfamily\fontsize{12}{14}\selectfont, label={lst:lmdb-example}]
 Key: b'image-00001'
 Value: b'\xff\xd8\xff\xe0\x00\x10JFIF...' (JPEG binary data)
 
