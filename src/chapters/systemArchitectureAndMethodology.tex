@@ -273,40 +273,40 @@ The orientation of the displacement vector is computed using the four-quadrant a
 
 The \texttt{atan2} function is defined piecewise to handle all possible combinations of signs for its arguments. When $\Delta x > 0$, the angle equals $\arctan(\Delta y / \Delta x)$. When $\Delta x < 0$ and $\Delta y \ge 0$, a correction of $+\pi$ is applied. When $\Delta x < 0$ and $\Delta y < 0$, a correction of $-\pi$ is applied. The degenerate cases where $\Delta x = 0$ yield $\pm\pi/2$ depending on the sign of $\Delta y$.
 
-For classification purposes, the angle is converted to a positive representation in degrees using the transformation $\tilde{\theta} = (180\theta / \pi) \mod 360$, yielding values in the range $[0°, 360°)$.
+For classification purposes, the angle is converted to a positive representation in degrees using the transformation $\tilde{\theta} = (180\theta / \pi) \mod 360$, yielding values in the range $[0^\circ, 360^\circ)$.
 
 \subsection{Horizontal and Vertical Line Classification}
 
-The classification of junction pairs as horizontal, vertical, or diagonal is accomplished through angular tolerance zones. The tolerance parameter $\epsilon = 18°$ represents 10\% of the half-circle, providing sufficient margin to accommodate minor deviations from perfect alignment while maintaining classification accuracy.
+The classification of junction pairs as horizontal, vertical, or diagonal is accomplished through angular tolerance zones. The tolerance parameter $\epsilon = 18^\circ$ represents 10\% of the half-circle, providing sufficient margin to accommodate minor deviations from perfect alignment while maintaining classification accuracy.
 
 \textbf{Horizontal Acceptance Region:} The set of angles classified as horizontal is defined as the union:
 
 \begin{equation}
-\Theta_H = [0°, 18°] \cup [162°, 198°] \cup [342°, 360°]
+\Theta_H = [0^\circ, 18^\circ] \cup [162^\circ, 198^\circ] \cup [342^\circ, 360^\circ]
 \label{eq:horizontal-region}
 \end{equation}
 
-This region captures angles within $\pm 18°$ of the positive $x$-axis ($0°$ and $360°$) and within $\pm 18°$ of the negative $x$-axis ($180°$).
+This region captures angles within $\pm 18^\circ$ of the positive $x$-axis ($0^\circ$ and $360^\circ$) and within $\pm 18^\circ$ of the negative $x$-axis ($180^\circ$).
 
 \textbf{Vertical Acceptance Region:} The set of angles classified as vertical is defined as:
 
 \begin{equation}
-\Theta_V = [72°, 108°] \cup [252°, 288°]
+\Theta_V = [72^\circ, 108^\circ] \cup [252^\circ, 288^\circ]
 \label{eq:vertical-region}
 \end{equation}
 
-This region captures angles within $\pm 18°$ of the positive $y$-axis ($90°$) and within $\pm 18°$ of the negative $y$-axis ($270°$).
+This region captures angles within $\pm 18^\circ$ of the positive $y$-axis ($90^\circ$) and within $\pm 18^\circ$ of the negative $y$-axis ($270^\circ$).
 
 \textbf{Diagonal Rejection Region:} The complement of the horizontal and vertical regions constitutes the diagonal rejection region:
 
 \begin{equation}
-\Theta_D = [0°, 360°) \setminus (\Theta_H \cup \Theta_V)
+\Theta_D = [0^\circ, 360^\circ) \setminus (\Theta_H \cup \Theta_V)
 \label{eq:diagonal-region}
 \end{equation}
 
 Junction pairs whose orientation falls within $\Theta_D$ are rejected as they do not represent valid axis-aligned wires.
 
-The classification function $\mathcal{O} : [0°, 360°) \to \{H, V, \varnothing\}$ maps each angle to its corresponding orientation category. The total angular coverage of valid classifications is $(|\Theta_H| + |\Theta_V|)/360° = 144°/360° = 40\%$, indicating that 40\% of angular space is accepted as orthogonal while 60\% is rejected as diagonal.
+The classification function $\mathcal{O} : [0^\circ, 360^\circ) \to \{H, V, \varnothing\}$ maps each angle to its corresponding orientation category. The total angular coverage of valid classifications is $(|\Theta_H| + |\Theta_V|)/360^\circ = 144^\circ/360^\circ = 40\%$, indicating that 40\% of angular space is accepted as orthogonal while 60\% is rejected as diagonal.
 
 \subsection{Orthogonal Projection and Axis Alignment}
 
@@ -330,14 +330,14 @@ The projected wire endpoints are then defined as $\mathbf{s} = (j_{i,x}, \bar{y}
 
 The projected wire endpoints are $\mathbf{s} = (\bar{x}, j_{i,y})$ and $\mathbf{e} = (\bar{x}, j_{k,y})$. Both endpoints share the same $x$-coordinate, ensuring perfect vertical alignment.
 
-\textbf{Projection Error Bound:} For a junction pair with orientation angle $\tilde{\theta} \in [0°, \epsilon]$ and inter-junction distance $L = \|\mathbf{d}^{\leftrightarrow}\|$, the maximum perpendicular displacement of any endpoint from its original position is bounded by:
+\textbf{Projection Error Bound:} For a junction pair with orientation angle $\tilde{\theta} \in [0^\circ, \epsilon]$ and inter-junction distance $L = \|\mathbf{d}^{\leftrightarrow}\|$, the maximum perpendicular displacement of any endpoint from its original position is bounded by:
 
 \begin{equation}
 \delta = \frac{|\Delta y|}{2} \le \frac{L \sin(\epsilon)}{2}
 \label{eq:projection-error}
 \end{equation}
 
-For the tolerance $\epsilon = 18°$ with $\sin(18°) \approx 0.309$, this yields $\delta \approx 0.155L$. Thus, for a 100-pixel wire, the maximum projection displacement is approximately 15.5 pixels.
+For the tolerance $\epsilon = 18^\circ$ with $\sin(18^\circ) \approx 0.309$, this yields $\delta \approx 0.155L$. Thus, for a 100-pixel wire, the maximum projection displacement is approximately 15.5 pixels.
 
 \subsection{Grid Quantization}
 
@@ -571,7 +571,7 @@ Character Accuracy measures how many characters in the predicted text match the 
 \label{eq:character-accuracy}
 \end{equation}
 
-In circuit diagrams, values like $10k$, $100\Omega$, $1\mu F$ are crucial. \gls{ocr} must correctly read these values, since even a small error (e.g., mistaking `k' as `1') leads to incorrect simulation behavior. A high character accuracy (target: 0.85 or above) ensures value-to-component mapping is reliable.
+In circuit diagrams, values like $10k$, $100\Omega$, $1\mu F$ are crucial. \gls{ocr} must correctly read these values, since even a small error (e.g., mistaking `k' as `1') leads to incorrect simulation behavior. A high character accuracy ensures value-to-component mapping is reliable.
 
 \subsection{Terminal and Node Detection Metrics}
 
@@ -642,7 +642,7 @@ To prevent propagating error (error from the output of YOLOv7 bleeding into \gls
 
 \subsection{Image Augmentation}
 
-Since the dataset contains handwritten circuit diagrams captured under variable lighting and orientations, several augmentation techniques were applied to improve model generalization including Contrast Enhancement (global) and Adaptive Brightness Adjustment by factors of 0.8 and 1.2. Furthermore, geometric augmentation techniques, like spatial flipping (both horizontally and vertically) and rotation (e.g., $90°$ or random rotation) proved to be unwise operations for this project. For example, if a ``C'' is rotated by $90°$, the ``C'' now resembles a ``U'', and the same applies to flipping (``M'' might look like ``W'', for example). Rather than increasing accuracy, it was realized that using rotation or flipping would simply confuse the model. However, continuous testing with other forms of augmentation will continue in hopes of improving the model.
+Since the dataset contains handwritten circuit diagrams captured under variable lighting and orientations, several augmentation techniques were applied to improve model generalization including Contrast Enhancement (global) and Adaptive Brightness Adjustment by factors of 0.8 and 1.2. Furthermore, geometric augmentation techniques, like spatial flipping (both horizontally and vertically) and rotation (e.g., $90^\circ$ or random rotation) proved to be unwise operations for this project. For example, if a ``C'' is rotated by $90^\circ$, the ``C'' now resembles a ``U'', and the same applies to flipping (``M'' might look like ``W'', for example). Rather than increasing accuracy, it was realized that using rotation or flipping would simply confuse the model. However, continuous testing with other forms of augmentation will continue in hopes of improving the model.
 
 \subsection{Fine-tuning YOLOv5 and YOLOv7 for Component Detection}
 
@@ -651,7 +651,7 @@ YOLOv5 was initially used for benchmarking, and later upgraded to YOLOv7 for bet
 The training parameters employed are as follows:
 
 \begin{itemize}
-    \item \textbf{Number of classes:} 60 (excluding ``UNKNOWN'')
+    \item \textbf{Number of classes:} 61
     \item \textbf{Training split:} 70\% training, 10\% validation, 20\% testing
     \item \textbf{Epochs:} 200 (for YOLOv5), 100 (for YOLOv7)
     \item \textbf{Image size:} $416 \times 416$ pixels
@@ -671,25 +671,25 @@ Three different modules, each for feature extraction, sequence modeling, and pre
 
 The line detection mechanism was engineered to exploit the semantic constraints of circuit diagrams, specifically that wires are predominantly axis-aligned (horizontal or vertical) and connect distinct components. Unlike the Probabilistic Hough Transform (\gls{pht}) which operates purely on pixel gradients, this approach uses the junction points detected by YOLOv7 as anchor nodes to reconstruct the wiring layout geometrically.
 
-First, a pairwise analysis was performed on all junction points identified by the object detection model. The algorithm iterates through every unique pair of junctions to calculate the angle of the vector connecting them. Since hand-drawn circuits contain imperfections, an angular tolerance of $\pm 18°$ was applied to classify connections as either horizontal or vertical. To ensure coordinate consistency across the diagram, the resulting segment coordinates were ``snapped'' to a grid using a 16-pixel quantization.
+First, a pairwise analysis was performed on all junction points identified by the object detection model. The algorithm iterates through every unique pair of junctions to calculate the angle of the vector connecting them. Since hand-drawn circuits contain imperfections, an angular tolerance of $\pm 18^\circ$ was applied to classify connections as either horizontal or vertical. To ensure coordinate consistency across the diagram, the resulting segment coordinates were ``snapped'' to a grid using a 16-pixel quantization.
 
 \begin{algorithm}
 \caption{Wire Classification and Alignment}
 \label{algo:wire-classification}
 \begin{algorithmic}
-\Require Set of junctions $J$, angular tolerance $\omega_{\text{tol}} = 18°$, grid size $g = 16$
+\Require Set of junctions $J$, angular tolerance $\omega_{\text{tol}} = 18^\circ$, grid size $g = 16$
 \Ensure Set of raw wire segments $S$
 \State $S \leftarrow \emptyset$
 \For{all pairs $(j_a, j_b) \in \text{Combinations}(J, 2)$}
     \State $\Delta x \leftarrow j_b.x - j_a.x$
     \State $\Delta y \leftarrow j_b.y - j_a.y$
     \State $\theta \leftarrow \text{atan2}(\Delta y, \Delta x)$
-    \If{$|\theta| \le \omega_{\text{tol}} \lor |\theta - 180°| \le \omega_{\text{tol}}$}
+    \If{$|\theta| \le \omega_{\text{tol}} \lor |\theta - 180^\circ| \le \omega_{\text{tol}}$}
         \State \textbf{Horizontal alignment check}
         \State $y_{\text{avg}} \leftarrow \frac{j_a.y + j_b.y}{2}$
         \State $y_{\text{snap}} \leftarrow \text{Round}\left(\frac{y_{\text{avg}}}{g}\right) \times g$
         \State $S \leftarrow S \cup \{(H, y_{\text{snap}}, \min(j_a.x, j_b.x), \max(j_a.x, j_b.x))\}$
-    \ElsIf{$|\theta - 90°| \le \omega_{\text{tol}} \lor |\theta - 270°| \le \omega_{\text{tol}}$}
+    \ElsIf{$|\theta - 90^\circ| \le \omega_{\text{tol}} \lor |\theta - 270^\circ| \le \omega_{\text{tol}}$}
         \State \textbf{Vertical alignment check}
         \State $x_{\text{avg}} \leftarrow \frac{j_a.x + j_b.x}{2}$
         \State $x_{\text{snap}} \leftarrow \text{Round}\left(\frac{x_{\text{avg}}}{g}\right) \times g$
@@ -794,7 +794,7 @@ The \gls{cghd} dataset comprises 4.99 GB of annotated data spanning over 3,000 r
         Bounding Box Annotations & 248,020 \\
         Text String Annotations & 85,417 (93.74\% completeness) \\
         Character Types & 98 \\
-        Object Classes & 61 (including ``UNKNOWN'') \\
+        Object Classes & 61 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -802,7 +802,7 @@ The \gls{cghd} dataset comprises 4.99 GB of annotated data spanning over 3,000 r
 Every image is rigorously annotated and the annotations provided per image include:
 
 \begin{itemize}
-    \item \textbf{Bounding Boxes (PASCAL VOC format)} for over 61 (including ``UNKNOWN'' class) electrical component classes, including resistors, capacitors, transistors, operational amplifiers, and textual elements.
+    \item \textbf{Bounding Boxes (PASCAL VOC format)} for 61 electrical component classes, including resistors, capacitors, transistors, operational amplifiers, and textual elements.
     
     \item \textbf{Text Labels} capturing component values and identifiers (e.g., ``$10k\Omega$'', ``$C1$'', ``$V$'').
     

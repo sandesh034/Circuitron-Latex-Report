@@ -131,7 +131,7 @@ After this script is run in its entirety, a file in \gls{lmdb} format, as is exp
 
 \begin{lstlisting}[frame=none, numbers=none, backgroundcolor=, basicstyle=\ttfamily\fontsize{12}{14}\selectfont, label={lst:lmdb-example}]
 Key: b'image-00001'
-Value: b'\xff\xd8\xff\xe0\x00\x10JFIF...' (JPEG binary data)
+Value: b'\xff\xd8\xff\xe0\x00\x10JFIF...'
 
 Key: b'label-00001'
 Value: b'voltage.dc'
@@ -144,7 +144,7 @@ After necessary conversion, the dataset was ready for being plugged into the req
 
 \subsection{Image Augmentation}
 
-Since the dataset contains handwritten circuit diagrams captured under variable lighting and orientations, several augmentation techniques were applied to improve model generalization including Contrast Enhancement (global) and Adaptive Brightness Adjustment by factors of 0.8 and 1.2. Furthermore, geometric augmentation techniques, like spatial flipping (both horizontally and vertically) and rotation (e.g., $90°$ or random rotation) proved to be unwise operations for this project. For example, if a ``C'' is rotated by $90°$, the ``C'' now resembles a ``U'', and the same applies to flipping (``M'' might look like ``W'', for example). Rather than increasing accuracy, it was realized that using rotation or flipping would simply confuse the model. However, continuous testing with other forms of augmentation will continue in hopes of improving the model.
+Since the dataset contains handwritten circuit diagrams captured under variable lighting and orientations, several augmentation techniques were applied to improve model generalization including Contrast Enhancement (global) and Adaptive Brightness Adjustment by factors of 0.8 and 1.2. Furthermore, geometric augmentation techniques, like spatial flipping (both horizontally and vertically) and rotation (e.g., $90^\circ$ or random rotation) proved to be unwise operations for this project. For example, if a ``C'' is rotated by $90^\circ$, the ``C'' now resembles a ``U'', and the same applies to flipping (``M'' might look like ``W'', for example). Rather than increasing accuracy, it was realized that using rotation or flipping would simply confuse the model. However, continuous testing with other forms of augmentation will continue in hopes of improving the model.
 
 \subsection{Fine-tuning YOLOv5 and YOLOv7 for Component Detection}
 
@@ -153,7 +153,7 @@ YOLOv5 was initially used for benchmarking, and later upgraded to YOLOv7 for bet
 The training parameters employed are as follows:
 
 \begin{itemize}
-    \item \textbf{Number of classes:} 60 (excluding ``UNKNOWN'')
+    \item \textbf{Number of classes:} 61
     \item \textbf{Training split:} 70\% training, 10\% validation, 20\% testing
     \item \textbf{Epochs:} 200 (for YOLOv5), 100 (for YOLOv7)
     \item \textbf{Image size:} $416 \times 416$ pixels
@@ -173,25 +173,25 @@ Three different modules, each for feature extraction, sequence modeling, and pre
 
 The line detection mechanism was engineered to exploit the semantic constraints of circuit diagrams, specifically that wires are predominantly axis-aligned (horizontal or vertical) and connect distinct components. Unlike the Probabilistic Hough Transform (\gls{pht}) which operates purely on pixel gradients, this approach uses the junction points detected by YOLOv7 as anchor nodes to reconstruct the wiring layout geometrically.
 
-First, a pairwise analysis was performed on all junction points identified by the object detection model. The algorithm iterates through every unique pair of junctions to calculate the angle of the vector connecting them. Since hand-drawn circuits contain imperfections, an angular tolerance of $\pm 18°$ was applied to classify connections as either horizontal or vertical. To ensure coordinate consistency across the diagram, the resulting segment coordinates were ``snapped'' to a grid using a 16-pixel quantization.
+First, a pairwise analysis was performed on all junction points identified by the object detection model. The algorithm iterates through every unique pair of junctions to calculate the angle of the vector connecting them. Since hand-drawn circuits contain imperfections, an angular tolerance of $\pm 18^\circ$ was applied to classify connections as either horizontal or vertical. To ensure coordinate consistency across the diagram, the resulting segment coordinates were ``snapped'' to a grid using a 16-pixel quantization.
 
 \begin{algorithm}
 \caption{Wire Classification and Alignment}
 \label{algo:wire-classification}
 \begin{algorithmic}
-\Require Set of junctions $J$, angular tolerance $\omega_{\text{tol}} = 18°$, grid size $g = 16$
+\Require Set of junctions $J$, angular tolerance $\omega_{\text{tol}} = 18^\circ$, grid size $g = 16$
 \Ensure Set of raw wire segments $S$
 \State $S \leftarrow \emptyset$
 \For{all pairs $(j_a, j_b) \in \text{Combinations}(J, 2)$}
     \State $\Delta x \leftarrow j_b.x - j_a.x$
     \State $\Delta y \leftarrow j_b.y - j_a.y$
     \State $\theta \leftarrow \text{atan2}(\Delta y, \Delta x)$
-    \If{$|\theta| \le \omega_{\text{tol}} \lor |\theta - 180°| \le \omega_{\text{tol}}$}
+    \If{$|\theta| \le \omega_{\text{tol}} \lor |\theta - 180^\circ| \le \omega_{\text{tol}}$}
         \State \textbf{Horizontal alignment check}
         \State $y_{\text{avg}} \leftarrow \frac{j_a.y + j_b.y}{2}$
         \State $y_{\text{snap}} \leftarrow \text{Round}\left(\frac{y_{\text{avg}}}{g}\right) \times g$
         \State $S \leftarrow S \cup \{(H, y_{\text{snap}}, \min(j_a.x, j_b.x), \max(j_a.x, j_b.x))\}$
-    \ElsIf{$|\theta - 90°| \le \omega_{\text{tol}} \lor |\theta - 270°| \le \omega_{\text{tol}}$}
+    \ElsIf{$|\theta - 90^\circ| \le \omega_{\text{tol}} \lor |\theta - 270^\circ| \le \omega_{\text{tol}}$}
         \State \textbf{Vertical alignment check}
         \State $x_{\text{avg}} \leftarrow \frac{j_a.x + j_b.x}{2}$
         \State $x_{\text{snap}} \leftarrow \text{Round}\left(\frac{x_{\text{avg}}}{g}\right) \times g$

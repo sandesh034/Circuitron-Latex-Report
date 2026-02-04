@@ -236,7 +236,7 @@ Morphological skeletonization is applied to the binary image to reduce all wire 
 
 The reduction in foreground pixel count before and after skeletonization is recorded to quantify structural simplification. Despite aggressive thinning, wire continuity and junction connectivity remain intact, making the skeleton suitable for graph-based analysis.
 
-\begin{figure}[H]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\textwidth]{src/images/figures/skelotonization.png}
     \caption{Skeletonization}
@@ -248,82 +248,6 @@ The reduction in foreground pixel count before and after skeletonization is reco
 Object detection is performed using a trained \gls{yolo} model to identify and localize elements in the circuit diagram. Detected objects are classified as follows: Class 0 corresponds to text annotations, Class 1 corresponds to junctions, and all remaining classes correspond to circuit components.
 
 The total number of detected objects per class is reported. To isolate only the wire network, bounding boxes associated with non-junction classes are removed from the skeleton image. This step eliminates component shapes while preserving junction points and interconnecting wires.
-
-\subsubsection{Class-wise Data Statistics}
-
-\begin{table}[H]
-    \centering
-    \caption{Frequency of Each Class in the \gls{cghd} Dataset}
-    \label{table:component-classes}
-    \small
-    \begin{tabular}{p{1.2cm}p{5cm}p{1.5cm}}
-        \toprule
-        \textbf{Code} & \textbf{Class Name} & \textbf{Count} \\
-        \midrule
-        1 & text & 91,122 \\
-        2 & junction & 79,202 \\
-        3 & crossover & 10,180 \\
-        4 & terminal & 11,253 \\
-        5 & gnd & 5,501 \\
-        6 & vss & 1,354 \\
-        7 & voltage.dc & 335 \\
-        8 & voltage.ac & 292 \\
-        9 & voltage.battery & 765 \\
-        10 & resistor & 14,400 \\
-        11 & resistor.adjustable & 1,052 \\
-        12 & resistor.photo & 65 \\
-        13 & capacitor.unpolarized & 5,841 \\
-        14 & capacitor.polarized & 2,227 \\
-        15 & capacitor.adjustable & 88 \\
-        16 & inductor & 1,976 \\
-        17 & inductor.ferrite & 120 \\
-        18 & inductor.coupled & 10 \\
-        19 & transformer & 483 \\
-        20 & diode & 3,890 \\
-        21 & diode.light\_emitting & 1,212 \\
-        22 & diode.thyrector & 16 \\
-        23 & diode.zener & 609 \\
-        24 & diac & 40 \\
-        25 & triac & 98 \\
-        26 & thyristor & 415 \\
-        27 & varistor & 184 \\
-        28 & transistor.bjt & 3,678 \\
-        29 & transistor.fet & 977 \\
-        30 & transistor.photo & 177 \\
-        31 & operational\_amplifier & 752 \\
-        32 & operational\_amplifier.schmitt\_trigger & 16 \\
-        33 & optocoupler & 162 \\
-        34 & integrated\_circuit & 1,506 \\
-        35 & integrated\_circuit.ne555 & 262 \\
-        36 & integrated\_circuit.voltage\_regulator & 362 \\
-        37 & xor & 162 \\
-        38 & and & 860 \\
-        39 & or & 440 \\
-        40 & not & 496 \\
-        41 & nand & 228 \\
-        42 & nor & 59 \\
-        43 & probe & 184 \\
-        44 & probe.current & 72 \\
-        45 & probe.voltage & 32 \\
-        46 & switch & 2,184 \\
-        47 & relay & 89 \\
-        48 & socket & 184 \\
-        49 & fuse & 226 \\
-        50 & speaker & 410 \\
-        51 & motor & 108 \\
-        52 & lamp & 301 \\
-        53 & microphone & 72 \\
-        54 & antenna & 24 \\
-        55 & crystal & 112 \\
-        56 & mechanical & 32 \\
-        57 & magnetic & 364 \\
-        58 & optical & 127 \\
-        59 & block & 0 \\
-        60 & explanatory & 610 \\
-        61 & unknown & 32 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
 \begin{figure}[H]
     \centering

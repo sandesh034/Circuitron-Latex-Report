@@ -59,6 +59,9 @@ test.tex
 !README.md
 .vscode/
 !0_draft.md
-
+src/.DS_Store
+.DS_Store
 !allpages.pdf
 !main.pdf
+main.sls
+main.slg
