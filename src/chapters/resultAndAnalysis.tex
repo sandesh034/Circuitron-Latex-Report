@@ -298,6 +298,32 @@ These intersections form the basis for reconstructing circuit connectivity graph
     \label{fig:wire-component-intersection}
 \end{figure}
 
+\section{Line Detection via Path Finding Visualization}
+
+The algorithm produces visual outputs that demonstrate the effectiveness of the endpoint detection and graph construction pipeline. The following subsections present the key visualizations obtained from applying the Multi-Head BFS algorithm to the skeletonized circuit image.
+
+\subsection{Skeletonized Image with Detected Endpoints}
+
+Figure~\ref{fig:skeleton_endpoints} displays the skeletonized image with all detected endpoints overlaid. The skeleton representation captures the one-pixel-wide structure of the circuit lines after morphological processing. Red circles indicate the detected endpoints, which were identified using the bounding box intersection method for line segments and center-snapping for junction points. Green rectangles show the original YOLO bounding boxes used for endpoint localization. This visualization confirms that the endpoint detection algorithm successfully identifies connection points at the boundaries of detected objects.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{src/images/figures/skeleton_with_endpoints.png}
+    \caption{Skeletonized image with detected endpoints}
+    \label{fig:skeleton_endpoints}
+\end{figure}
+
+\subsection{Adjacency Graph Visualization}
+
+Figure~\ref{fig:adjacency_graph} presents the final adjacency graph constructed using the Multi-Head BFS algorithm. Each node corresponds to a detected endpoint from the previous stage. Blue lines connecting the nodes represent edges in the graph, indicating skeleton connectivity between endpoints. The graph has been processed to remove self-edges (connections between endpoints belonging to the same detected object), ensuring that only meaningful inter-component connections are preserved. This graph structure enables downstream applications such as circuit topology analysis and netlist extraction.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{src/images/figures/adjacency_graph.png}
+    \caption{Adjacency graph constructed using Multi-Head BFS algorithm}
+    \label{fig:adjacency_graph}
+\end{figure}
+
 \section{Frontend Visualization}
 
 The frontend of the \gls{circuitron} web application provides an interactive environment for circuit design, simulation, and analysis. It enables users to construct electrical circuits using a drag-and-drop schematic editor with grid-based alignment, snap-to-grid functionality, and real-time wire routing. Components such as passive elements, active devices, and sources can be configured through a properties panel that allows precise control over electrical parameters and placement. 
