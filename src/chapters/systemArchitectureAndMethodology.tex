@@ -6,7 +6,7 @@ The process of converting a handwritten circuit diagram into a structured netlis
 
 \begin{figure}[H]
     \centering
-    \fbox{\parbox{0.9\textwidth}{\centering [Block Diagram Placeholder: Preprocessing $\rightarrow$ Detection $\rightarrow$ OCR $\rightarrow$ Wire Detection $\rightarrow$ Netlist $\rightarrow$ Simulation/Schematic]}}
+    \includegraphics[width=\textwidth]{src/images/figures/block_diagram.png}
     \caption{Block Diagram of the CIRCUITRON System}
     \label{fig:block-diagram-circuitron}
 \end{figure}
@@ -516,36 +516,6 @@ The global intersection set aggregates all wire-box intersections across the com
 
 The detected intersection points serve as terminal connection points in the circuit topology. Each intersection $(x, y) \in \mathcal{I}_{\text{total}}$ indicates a location where a wire connects to a component, enabling the construction of a circuit graph where components are nodes and wires are edges. This representation facilitates subsequent circuit analysis tasks including netlist generation, connectivity verification, and schematic reconstruction.
 
-\section{Line Detection via Path Finding}
-
-This work presents a pipeline for detecting lines in skeletonized circuit images by identifying endpoints and constructing a graph representation using a Multi-Head Breadth-First Search (BFS) algorithm. The methodology consists of two primary stages: endpoint detection from object detection bounding boxes, and graph construction via skeleton traversal.
-
-\subsection{Endpoint Detection}
-
-The endpoint detection strategy differs based on the object class detected by the upstream object detector:
-
-\textbf{Class 1 Objects (Junction Points):} For junction points, a \textbf{single endpoint} is computed by calculating the bounding box center $(x_c, y_c)$ and snapping to the nearest skeleton pixel within an expanded search region (margin = 8 pixels). The closest skeleton point is returned as the endpoint.
-
-\textbf{Class 2+ Objects (Line Segments):} For line segments, \textbf{two endpoints} are computed using bounding box border intersection. Skeleton pixels that lie on or near the bounding box border (within tolerance) are identified. Among these border hits, true topological endpoints (degree = 1) are preferred. The farthest pair of points is selected as the two endpoints.
-
-\subsection{Graph Construction via Multi-Head BFS}
-
-The Multi-Head BFS algorithm constructs a graph where \textbf{nodes} represent detected endpoints and \textbf{edges} represent skeleton connectivity between endpoints.
-
-Each node occupies a disk region of radius $r$ centered at the endpoint. A \texttt{node\_id\_map} is precomputed where each pixel stores:
-\[
-\text{node\_id\_map}[y][x] = 
-\begin{cases}
-i & \text{if pixel is within radius } r \text{ of node } i \\
--1 & \text{otherwise}
-\end{cases}
-\]
-
-For each source node $i$, all pixels within the source node's disk are marked as visited. The BFS queue is initialized with skeleton pixels at the disk boundary. The algorithm traverses along skeleton pixels using 8-connectivity. When encountering a pixel belonging to another node $j$, the edge $(i, j)$ is recorded and that branch stops. This continues until all reachable skeleton paths are explored.
-
-\textbf{Self-Edge Removal:} After constructing the adjacency graph, edges connecting endpoints that belong to the same detected object (i.e., endpoint pairs from the same bounding box) are removed. This ensures the graph represents only inter-object connections.
-
-
 \section{Use-Case Diagram}
 
 The use-case diagram in Figure~\ref{fig:use-case-diagram} outlines the CIRCUITRON system's functionality depicting the interactions between users and the system. The primary actor is the user, who can be a student, instructor, or engineer. The system begins with the user uploading a hand-drawn circuit image.
@@ -855,177 +825,38 @@ The text annotation coverage is extensive, with labels ranging from single chara
         \toprule
         \textbf{Code} & \textbf{Class Name} & \textbf{Count} & \textbf{Code} & \textbf{Class Name} & \textbf{Count} \\
         \midrule
-        1 & text & 91,122 & 27 & varistor & 184 \\
-        2 & junction & 79,202 & 28 & transistor.bjt & 3,678 \\
-        3 & crossover & 10,180 & 29 & transistor.fet & 977 \\
-        4 & terminal & 11,253 & 30 & transistor.photo & 177 \\
-        5 & gnd & 5,501 & 31 & operational\_amplifier & 752 \\
-        6 & vss & 1,354 & 32 & operational\_amplifier.schmitt\_trigger & 16 \\
-        7 & voltage.dc & 335 & 33 & optocoupler & 162 \\
-        8 & voltage.ac & 292 & 34 & integrated\_circuit & 1,506 \\
-        9 & voltage.battery & 765 & 35 & integrated\_circuit.ne555 & 262 \\
-        10 & resistor & 14,400 & 36 & integrated\_circuit.voltage\_regulator & 362 \\
-        11 & resistor.adjustable & 1,052 & 37 & xor & 162 \\
-        12 & resistor.photo & 65 & 38 & and & 860 \\
-        13 & capacitor.unpolarized & 5,841 & 39 & or & 440 \\
-        14 & capacitor.polarized & 2,227 & 40 & not & 496 \\
-        15 & capacitor.adjustable & 88 & 41 & nand & 228 \\
-        16 & inductor & 1,976 & 42 & nor & 59 \\
-        17 & inductor.ferrite & 120 & 43 & probe & 184 \\
-        18 & inductor.coupled & 10 & 44 & probe.current & 72 \\
-        19 & transformer & 483 & 45 & probe.voltage & 32 \\
-        20 & diode & 3,890 & 46 & switch & 2,184 \\
-        21 & diode.light\_emitting & 1,212 & 47 & relay & 89 \\
-        22 & diode.thyristor & 16 & 48 & socket & 184 \\
-        23 & diode.zener & 609 & 49 & fuse & 226 \\
-        24 & diac & 40 & 50 & speaker & 410 \\
-        25 & triac & 98 & 51 & motor & 108 \\
-        26 & thyristor & 415 & 52 & lamp & 301 \\
+        1 & text & 91,122 & 32 & opamp.schmitt & 16 \\
+        2 & junction & 79,202 & 33 & optocoupler & 162 \\
+        3 & crossover & 10,180 & 34 & ic & 1,506 \\
+        4 & terminal & 11,253 & 35 & ic.ne555 & 262 \\
+        5 & gnd & 5,501 & 36 & ic.v\_regulator & 362 \\
+        6 & vss & 1,354 & 37 & xor & 162 \\
+        7 & voltage.dc & 335 & 38 & and & 860 \\
+        8 & voltage.ac & 292 & 39 & or & 440 \\
+        9 & voltage.battery & 765 & 40 & not & 496 \\
+        10 & resistor & 14,400 & 41 & nand & 228 \\
+        11 & resistor.adj & 1,052 & 42 & nor & 59 \\
+        12 & resistor.photo & 65 & 43 & probe & 184 \\
+        13 & cap.unpol & 5,841 & 44 & probe.curr & 72 \\
+        14 & cap.pol & 2,227 & 45 & probe.volt & 32 \\
+        15 & cap.adj & 88 & 46 & switch & 2,184 \\
+        16 & inductor & 1,976 & 47 & relay & 89 \\
+        17 & inductor.ferrite & 120 & 48 & socket & 184 \\
+        18 & inductor.coupled & 10 & 49 & fuse & 226 \\
+        19 & transformer & 483 & 50 & speaker & 410 \\
+        20 & diode & 3,890 & 51 & motor & 108 \\
+        21 & diode.led & 1,212 & 52 & lamp & 301 \\
+        22 & diode.thyrector & 16 & 53 & microphone & 72 \\
+        23 & diode.zener & 609 & 54 & antenna & 24 \\
+        24 & diac & 40 & 55 & crystal & 112 \\
+        25 & triac & 98 & 56 & mechanical & 32 \\
+        26 & thyristor & 415 & 57 & magnetic & 364 \\
+        27 & varistor & 184 & 58 & optical & 127 \\
+        28 & transistor.bjt & 3,678 & 59 & block & 0 \\
+        29 & transistor.fet & 977 & 60 & explanatory & 610 \\
+        30 & transistor.photo & 177 & 61 & unknown & 32 \\
+        31 & opamp & 752 &  &  &  \\
         \bottomrule
     \end{tabular}
 \end{table}
-
-\chapter{IMPLEMENTATION DETAILS}
-
-The implementation of the system to convert hand-drawn circuit diagrams into simulation-ready netlists and digital schematics follows a modular approach, aligning with the pipeline described in the architecture and methodology. Some of the methodologies explained in the previous section, that have been implemented are explained in this section.
-
-\section{Dataset Manipulation and Preprocessing}
-
-\subsection{Conversion of Annotation Formats}
-
-To accommodate the multiple models in the pipeline (YOLOv7 for component detection and \gls{ocr} for value extraction), annotation files provided in the \gls{cghd} dataset in Pascal VOC (XML) format were converted into compatible formats. Likewise, for EasyOCR-inspired custom-trained \gls{ocr}, all text-sections needed to be cropped out from the image with corresponding labels (ground truth) and then fed to the fine-tuned model.
-
-In Pascal VOC format, the information regarding the circuit and its components are stored in the following format as shown by the example below:
-
-\begin{lstlisting}[language=XML, frame=none, numbers=none, backgroundcolor=, basicstyle=\ttfamily\fontsize{12}{14}\selectfont, label={lst:pascal-voc-example}]
-<annotation>
-    <folder>images</folder>
-    <filename>C1_D1_P2.jpg</filename>
-    <path>./drafter_1/images/C1_D1_P2.jpg</path>
-    <source>
-        <database>CGHD</database>
-    </source>
-    <size>
-        <width>3024</width>
-        <height>4032</height>
-        <depth>3</depth>
-    </size>
-    <segmented>0</segmented>
-    <object>
-        <name>voltage.dc</name>
-        <pose>Unspecified</pose>
-        <truncated>0</truncated>
-        <difficult>0</difficult>
-        <bndbox>
-            <xmin>327</xmin>
-            <ymin>546</ymin>
-            <xmax>604</xmax>
-            <ymax>838</ymax>
-            <rotation>10</rotation>
-        </bndbox>
-    </object>
-</annotation>
-\end{lstlisting}
-
-For \gls{yolo}-based detection, XML annotations were converted to \gls{yolo} format (\texttt{.txt}) using a custom \gls{python} script. Each \texttt{.txt} file contains the class index and normalized bounding box coordinates in the format:
-
-\begin{center}
-\texttt{<class\_id> <x\_center> <y\_center> <width> <height>}
-\end{center}
-
-The pseudocode for the VOC to YOLO annotation conversion is as follows:
-
-\begin{algorithm}
-\caption{VOC to YOLO Annotation Conversion}
-\label{algo:voc-to-yolo}
-\begin{algorithmic}
-\Require XML annotation file $X$, class map $C$, image width $W$, image height $H$
-\Ensure List of YOLO formatted annotation lines $Y$
-\State Parse XML file $X$ into tree structure
-\State $Y \leftarrow \emptyset$
-\For{all object nodes $o$ in XML root}
-    \State $\text{clsname} \leftarrow$ class name of $o$
-    \If{$\text{clsname} \notin C$}
-        \State \textbf{continue}
-    \EndIf
-    \State $\text{clsid} \leftarrow C[\text{clsname}]$
-    \State Extract bounding box $(x_{\min}, y_{\min}, x_{\max}, y_{\max})$ from $o$
-    \State Convert VOC coordinates to normalized YOLO format
-    \State $x_{\text{center}} \leftarrow \frac{x_{\min} + x_{\max}}{2W}$
-    \State $y_{\text{center}} \leftarrow \frac{y_{\min} + y_{\max}}{2H}$
-    \State $w \leftarrow \frac{x_{\max} - x_{\min}}{W}$
-    \State $h \leftarrow \frac{y_{\max} - y_{\min}}{H}$
-    \State Append formatted string $(x_{\text{center}}, y_{\text{center}}, w, h)$ to $Y$
-\EndFor
-\State \Return $Y$
-\end{algorithmic}
-\end{algorithm}
-
-The calculations run for this conversion is as follows:
-
-\begin{equation}
-x_{\text{center}} = \frac{327 + 604}{2 \times 3024} = \frac{465.5}{3024} = 0.1539
-\label{eq:voc-yolo-x}
-\end{equation}
-
-\begin{equation}
-y_{\text{center}} = \frac{546 + 838}{2 \times 4032} = \frac{692}{4032} = 0.1716
-\label{eq:voc-yolo-y}
-\end{equation}
-
-\begin{equation}
-w = \frac{604 - 327}{3024} = \frac{277}{3024} = 0.0916
-\label{eq:voc-yolo-w}
-\end{equation}
-
-\begin{equation}
-h = \frac{838 - 546}{4032} = \frac{292}{4032} = 0.0724
-\label{eq:voc-yolo-h}
-\end{equation}
-
-This gives the information required by \gls{yolo} in the appropriate format. It is convention to save this new annotation file in the same directory as the image.
-
-Likewise, for \gls{ocr} compatibility, the same Pascal VOC annotations were converted to \gls{lmdb} format. \gls{lmdb} is a high-speed key-value store where each key corresponds to an index and each value contains an image-text pair (serialized).
-
-The pseudocode for the conversion of Pascal VOC format to \gls{ocr}-compatible \gls{lmdb} file format is as follows:
-
-\begin{algorithm}
-\caption{Image Cropping and LMDB Dataset Creation}
-\label{algo:image-crop-lmdb}
-\begin{algorithmic}
-\Require Input image file $I$, crop coordinates $(y_{\min}, y_{\max}, x_{\min}, x_{\max})$, target size $(W, H)$
-\Ensure \gls{lmdb} database containing image-label pairs
-\State Load image $I$ into memory
-\State Crop image using coordinates $[y_{\min} : y_{\max}, x_{\min} : x_{\max}]$
-\State Resize cropped image to size $(W, H)$
-\State Convert cropped image to byte representation
-\State Convert image array to PIL image
-\State Initialize in-memory byte buffer
-\State Save image to buffer in JPEG format
-\State Extract byte stream from buffer
-\State Store image and label in \gls{lmdb}
-\State Open \gls{lmdb} environment with predefined map size
-\State Begin write transaction
-\State Store image bytes with key \texttt{image-00001}
-\State Store corresponding label with key \texttt{label-00001}
-\State Store total sample count with key \texttt{num-samples}
-\State Commit transaction
-\State \Return \gls{lmdb} environment
-\end{algorithmic}
-\end{algorithm}
-
-After this script is run in its entirety, a file in \gls{lmdb} format, as is expected by \gls{ocr}, is received as shown in the example below:
-
-\begin{lstlisting}[frame=none, numbers=none, backgroundcolor=, basicstyle=\ttfamily\fontsize{12}{14}\selectfont, label={lst:lmdb-example}]
-Key: b'image-00001'
-Value: b'\xff\xd8\xff\xe0\x00\x10JFIF...' (JPEG binary data)
-
-Key: b'label-00001'
-Value: b'voltage.dc'
-
-Key: b'num-samples'
-Value: b'000001'
-\end{lstlisting}
-
-After necessary conversion, the dataset was ready for being plugged into the required models for fine-tuning them. But first, some experimentation was done with different forms of image augmentation techniques.
 

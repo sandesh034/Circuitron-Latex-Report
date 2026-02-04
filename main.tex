@@ -10,7 +10,10 @@
 
 % Glossary entries (define once, print later)
 \input{src/frontmatter/abbreviations}
-\input{src/frontmatter/symbols}
+% \input{src/frontmatter/symbols}
+
+% Initialize glossaries
+\makeglossaries
 
 
 
@@ -35,6 +38,7 @@
 \input{src/frontmatter/acknow}
 \input{src/frontmatter/abstract}
 \input{src/frontmatter/toc}
+% \input{src/frontmatter/table_of_acron}
 
 % =====================
 % MAINMATTER
@@ -49,7 +53,7 @@
 \input{src/chapters/implementationDetails}
 \input{src/chapters/resultAndAnalysis}
 \input{src/chapters/remainingTasks}
-\input{src/chapters/conclusion}
+% \input{src/chapters/conclusion}
 
 % =====================
 % BACKMATTER / APPENDICES
@@ -58,7 +62,7 @@
 \appendix
 \addcontentsline{toc}{chapter}{APPENDICES}
 \input{src/backmatter/back.tex}
-\input{src/backmatter/studentGuide.tex}
+% \input{src/backmatter/studentGuide.tex}
 
 
 % =====================

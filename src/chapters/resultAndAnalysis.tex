@@ -59,7 +59,7 @@ In order to monitor the progress in models' ability to recognize components as t
     \label{fig:map50-95-epochs}
 \end{figure}
 
-It is clear from both \cref{fig:map50-epochs} and \cref{fig:map50-95-epochs} that the \gls{map} scores for \gls{yolo}v7 are significantly better than that for \gls{yolo}v5.
+It is clear from both \cref{fig:map50-epochs} and \cref{fig:map50-95-epochs} that the \gls{map} scores for \gls{yolo}v7 are significantly better than that for \gls{yolo}v5. Likewise, the loss curves, as shown in the previous figures, demonstrate a steeper curve in the case of YOLOv7.
 
 \subsubsection{Precision, Recall, and F1 Score vs Confidence}
 
@@ -81,6 +81,8 @@ The following graphs demonstrate the model performance under varying confidence 
     \label{fig:precision-conf-v7}
 \end{figure}
 
+\cref{fig:precision-conf-v5} and \cref{fig:precision-conf-v7} demonstrate the Precision-Confidence Curve for YOLOv5 and YOLOv7 respectively. The area under this curve informs how consistently precise the model is across all confidence thresholds. For a large area under the curve, as in the case of YOLOv7, the model maintains good precision even when threshold changes; however, for a smaller area, precision collapses quickly when threshold is relaxed.
+
 \paragraph{Recall vs Confidence}
 
 \begin{figure}[H]
@@ -96,6 +98,8 @@ The following graphs demonstrate the model performance under varying confidence 
     \caption{Recall-Confidence Curve for YOLOv7}
     \label{fig:recall-conf-v7}
 \end{figure}
+
+\cref{fig:recall-conf-v5} and \cref{fig:recall-conf-v7} demonstrate the Recall-Confidence Curve for YOLOv5 and YOLOv7 respectively. The area under this curve informs how well the model preserves recall while increasing certainty. For a large area, the recall stays high even with strict thresholds.
 
 \paragraph{F1 Score vs Confidence}
 
@@ -113,6 +117,8 @@ The following graphs demonstrate the model performance under varying confidence 
     \label{fig:f1-conf-v7}
 \end{figure}
 
+\cref{fig:f1-conf-v5} and \cref{fig:f1-conf-v7} demonstrate the F1 Score-Confidence Curve for YOLOv5 and YOLOv7 respectively. The larger the area under this curve, the higher the robustness of the precision-recall trade-off across thresholds.
+
 \paragraph{Precision-Recall Curve}
 
 \begin{figure}[H]
@@ -129,7 +135,7 @@ The following graphs demonstrate the model performance under varying confidence 
     \label{fig:pr-curve-v7}
 \end{figure}
 
-These curves help assess how confident and consistent predictions are across threshold values. The comparative results demonstrate that \gls{yolo}v7 provides superior detection performance in terms of both accuracy and robustness across varying confidence thresholds, making it the preferred choice for the \gls{circuitron} system.
+\cref{fig:pr-curve-v5} and \cref{fig:pr-curve-v7} demonstrate the Precision-Recall Curve for YOLOv5 and YOLOv7 respectively. The area under this curve gives the average precision (AP) which informs how good the model is at ranking positive samples above negative ones. The area under each of the curves in these figures is higher for YOLOv7 in comparison to YOLOv5. This is expected behavior and proves YOLOv7 is better than YOLOv5 when it comes to performance. Although YOLOv7 is computationally more intensive and generally heavier than YOLOv5, this is a trade-off willing to be accepted to gain performance.
 
 \subsection{Confusion Matrix}
 
@@ -148,6 +154,8 @@ To assess per-class performance, confusion matrices were generated using the val
     \caption{Confusion Matrix for YOLOv7}
     \label{fig:confusion-matrix-v7}
 \end{figure}
+
+\cref{fig:confusion-matrix-v5} and \cref{fig:confusion-matrix-v7} demonstrate the confusion matrices for YOLOv5 and YOLOv7 respectively. In comparison, the confusion matrix for YOLOv7 has a very dark main diagonal and very light off-diagonals, which means that the model exhibits strong class separability with minimal inter-class confusion.
 
 \subsection{Quantitative Results Comparison}
 
@@ -240,6 +248,82 @@ The reduction in foreground pixel count before and after skeletonization is reco
 Object detection is performed using a trained \gls{yolo} model to identify and localize elements in the circuit diagram. Detected objects are classified as follows: Class 0 corresponds to text annotations, Class 1 corresponds to junctions, and all remaining classes correspond to circuit components.
 
 The total number of detected objects per class is reported. To isolate only the wire network, bounding boxes associated with non-junction classes are removed from the skeleton image. This step eliminates component shapes while preserving junction points and interconnecting wires.
+
+\subsubsection{Class-wise Data Statistics}
+
+\begin{table}[H]
+    \centering
+    \caption{Frequency of Each Class in the \gls{cghd} Dataset}
+    \label{table:component-classes}
+    \small
+    \begin{tabular}{p{1.2cm}p{5cm}p{1.5cm}}
+        \toprule
+        \textbf{Code} & \textbf{Class Name} & \textbf{Count} \\
+        \midrule
+        1 & text & 91,122 \\
+        2 & junction & 79,202 \\
+        3 & crossover & 10,180 \\
+        4 & terminal & 11,253 \\
+        5 & gnd & 5,501 \\
+        6 & vss & 1,354 \\
+        7 & voltage.dc & 335 \\
+        8 & voltage.ac & 292 \\
+        9 & voltage.battery & 765 \\
+        10 & resistor & 14,400 \\
+        11 & resistor.adjustable & 1,052 \\
+        12 & resistor.photo & 65 \\
+        13 & capacitor.unpolarized & 5,841 \\
+        14 & capacitor.polarized & 2,227 \\
+        15 & capacitor.adjustable & 88 \\
+        16 & inductor & 1,976 \\
+        17 & inductor.ferrite & 120 \\
+        18 & inductor.coupled & 10 \\
+        19 & transformer & 483 \\
+        20 & diode & 3,890 \\
+        21 & diode.light\_emitting & 1,212 \\
+        22 & diode.thyrector & 16 \\
+        23 & diode.zener & 609 \\
+        24 & diac & 40 \\
+        25 & triac & 98 \\
+        26 & thyristor & 415 \\
+        27 & varistor & 184 \\
+        28 & transistor.bjt & 3,678 \\
+        29 & transistor.fet & 977 \\
+        30 & transistor.photo & 177 \\
+        31 & operational\_amplifier & 752 \\
+        32 & operational\_amplifier.schmitt\_trigger & 16 \\
+        33 & optocoupler & 162 \\
+        34 & integrated\_circuit & 1,506 \\
+        35 & integrated\_circuit.ne555 & 262 \\
+        36 & integrated\_circuit.voltage\_regulator & 362 \\
+        37 & xor & 162 \\
+        38 & and & 860 \\
+        39 & or & 440 \\
+        40 & not & 496 \\
+        41 & nand & 228 \\
+        42 & nor & 59 \\
+        43 & probe & 184 \\
+        44 & probe.current & 72 \\
+        45 & probe.voltage & 32 \\
+        46 & switch & 2,184 \\
+        47 & relay & 89 \\
+        48 & socket & 184 \\
+        49 & fuse & 226 \\
+        50 & speaker & 410 \\
+        51 & motor & 108 \\
+        52 & lamp & 301 \\
+        53 & microphone & 72 \\
+        54 & antenna & 24 \\
+        55 & crystal & 112 \\
+        56 & mechanical & 32 \\
+        57 & magnetic & 364 \\
+        58 & optical & 127 \\
+        59 & block & 0 \\
+        60 & explanatory & 610 \\
+        61 & unknown & 32 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \begin{figure}[H]
     \centering

@@ -262,212 +262,53 @@ The wire–component intersection detection algorithm identifies precise connect
 \end{algorithmic}
 \end{algorithm}
 
-
-\section{Line Detection via Path Finding}
-
-This section presents the algorithmic implementation of the line detection pipeline. The approach involves three key procedures: constructing a spatial mapping of node regions, performing multi-head BFS traversal to discover connectivity, and filtering out spurious self-edges.
-
-The first step in the pipeline is building a node identification map. This data structure enables constant-time lookup to determine whether a given pixel belongs to a node region. For each detected endpoint, a circular disk of radius $r$ is marked in the map, associating all pixels within that disk with the corresponding node index. Algorithm~\ref{alg:node_id_map} formalizes this construction.
-
-\begin{algorithm}[H]
-\caption{Build Node ID Map}
-\label{alg:node_id_map}
-\begin{algorithmic}[1]
-\Require Skeleton image $S$ of size $H \times W$, list of nodes $\mathcal{N} = \{(x_0, y_0), \ldots, (x_{n-1}, y_{n-1})\}$, radius $r$
-\Ensure Node ID map $M$ of size $H \times W$
-
-\State $M \gets$ array of size $H \times W$ initialized to $-1$
-\State $\mathcal{D} \gets \text{DiskMask}(r)$
-
-\For{$i \gets 0$ \textbf{to} $n-1$}
-    \State $(n_x, n_y) \gets \mathcal{N}[i]$
-    \For{each $(dy, dx) \in \mathcal{D}$}
-        \State $(p_y, p_x) \gets (n_y + dy, n_x + dx)$
-        \If{$0 \leq p_y < H$ \textbf{and} $0 \leq p_x < W$}
-            \State $M[p_y][p_x] \gets i$
-        \EndIf
-    \EndFor
-\EndFor
-
-\State \Return $M$
-\end{algorithmic}
-\end{algorithm}
-
-Once the node ID map is constructed, the algorithm performs a breadth-first search from each node to discover its neighbors along the skeleton. The BFS starts from the boundary of each node's disk region and traverses skeleton pixels using 8-connectivity. When the traversal encounters a pixel belonging to a different node, that node is recorded as a neighbor and the branch terminates. This ensures that each skeleton path is followed until it reaches another endpoint. Algorithm~\ref{alg:bfs_node} describes this procedure.
-
-\begin{algorithm}[H]
-\caption{BFS Neighbors for Node}
-\label{alg:bfs_node}
-\begin{algorithmic}[1]
-\Require Node index $i$, nodes $\mathcal{N}$, skeleton $S$, node ID map $M$, radius $r$
-\Ensure Set of neighbor node indices $\mathcal{A}_i$
-
-\State $(n_x, n_y) \gets \mathcal{N}[i]$
-\State $\mathcal{A}_i \gets \emptyset$
-\State $V \gets$ boolean array of size $H \times W$ initialized to \texttt{false}
-\State $\mathcal{D} \gets \text{DiskMask}(r)$
-
-\For{each $(dy, dx) \in \mathcal{D}$}
-    \State $(p_y, p_x) \gets (n_y + dy, n_x + dx)$
-    \If{$0 \leq p_y < H$ \textbf{and} $0 \leq p_x < W$}
-        \State $V[p_y][p_x] \gets \texttt{true}$
-    \EndIf
-\EndFor
-
-\State $Q \gets$ empty queue
-\For{each $(dy, dx) \in \mathcal{D}$}
-    \State $(p_y, p_x) \gets (n_y + dy, n_x + dx)$
-    \For{each $(n_y', n_x') \in \text{Neighbors8}(p_y, p_x)$}
-        \If{$\neg V[n_y'][n_x']$ \textbf{and} $S[n_y'][n_x'] > 0$}
-            \State $V[n_y'][n_x'] \gets \texttt{true}$
-            \State $Q.\text{enqueue}((n_y', n_x'))$
-        \EndIf
-    \EndFor
-\EndFor
-
-\While{$Q$ is not empty}
-    \State $(c_y, c_x) \gets Q.\text{dequeue}()$
-    \State $j \gets M[c_y][c_x]$
-    
-    \If{$j \neq -1$ \textbf{and} $j \neq i$}
-        \State $\mathcal{A}_i \gets \mathcal{A}_i \cup \{j\}$
-        \State \textbf{continue}
-    \EndIf
-    
-    \For{each $(n_y', n_x') \in \text{Neighbors8}(c_y, c_x)$}
-        \If{$\neg V[n_y'][n_x']$ \textbf{and} $S[n_y'][n_x'] > 0$}
-            \State $V[n_y'][n_x'] \gets \texttt{true}$
-            \State $Q.\text{enqueue}((n_y', n_x'))$
-        \EndIf
-    \EndFor
-\EndWhile
-
-\State \Return $\mathcal{A}_i$
-\end{algorithmic}
-\end{algorithm}
-
-The final step removes spurious connections between endpoints that belong to the same detected object. Since line segment bounding boxes produce two endpoints each, the BFS may incorrectly connect these as neighbors via the skeleton segment within the bounding box. By maintaining a list of endpoint pairs from the same object, these self-edges are explicitly removed from the adjacency graph. Algorithm~\ref{alg:remove_self} implements this filtering.
-
-\begin{algorithm}[H]
-\caption{Remove Self-Edges (Same-Object Connections)}
-\label{alg:remove_self}
-\begin{algorithmic}[1]
-\Require Adjacency $\mathcal{G}$, endpoint pairs $\mathcal{P} = \{(p_1^{(k)}, p_2^{(k)})\}_{k=1}^{m}$, nodes $\mathcal{N}$
-\Ensure Filtered adjacency $\mathcal{G}'$
-
-\State $\mathcal{G}' \gets \mathcal{G}$
-
-\For{each $(p_1, p_2) \in \mathcal{P}$}
-    \State $i \gets \text{FindIndex}(p_1, \mathcal{N})$
-    \State $j \gets \text{FindIndex}(p_2, \mathcal{N})$
-    
-    \If{$i \neq -1$ \textbf{and} $j \neq -1$}
-        \State $\mathcal{G}'[i] \gets \mathcal{G}'[i] \setminus \{j\}$
-        \State $\mathcal{G}'[j] \gets \mathcal{G}'[j] \setminus \{i\}$
-    \EndIf
-\EndFor
-
-\State \Return $\mathcal{G}'$
-\end{algorithmic}
-\end{algorithm}
-
-\subsection{Complexity Analysis}
-
-This subsection analyzes the computational complexity of the line detection pipeline. Let $H, W$ denote the image dimensions, $n$ the number of nodes (endpoints), $r$ the disk radius for node regions, and $P$ the number of skeleton pixels (typically $P \ll H \times W$).
-
-\textbf{Time Complexity:} Table~\ref{tab:time_complexity} summarizes the time complexity of each operation in the pipeline.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Operation} & \textbf{Complexity} & \textbf{Description} \\
-\midrule
-Node ID Map Construction & $O(n \cdot r^2)$ & Each node marks $\pi r^2$ pixels \\
-Single Node BFS & $O(P)$ & Each skeleton pixel visited at most once \\
-Complete Adjacency Build & $O(n \cdot P)$ & BFS from each of $n$ nodes \\
-Self-Edge Removal & $O(m)$ & $m$ = number of endpoint pairs \\
-\midrule
-\textbf{Total} & $O(n \cdot r^2 + n \cdot P)$ & Dominated by BFS traversals \\
-\bottomrule
-\end{tabular}
-\caption{Time complexity breakdown for Multi-Head BFS algorithm}
-\label{tab:time_complexity}
-\end{table}
-
-For typical skeleton images where $P = O(H + W)$ (linear in image perimeter), the overall complexity is:
-\[
-T(n, H, W, r) = O(n \cdot r^2 + n \cdot (H + W)) = O(n \cdot (r^2 + H + W))
-\]
-
-\textbf{Space Complexity:} Table~\ref{tab:space_complexity} details the memory requirements of the algorithm.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Data Structure} & \textbf{Space} & \textbf{Description} \\
-\midrule
-Skeleton Image $S$ & $O(H \times W)$ & Binary image storage \\
-Node ID Map $M$ & $O(H \times W)$ & Integer array for node mapping \\
-Visited Array $V$ & $O(H \times W)$ & Per-BFS boolean array \\
-BFS Queue $Q$ & $O(P)$ & Maximum skeleton pixels in queue \\
-Adjacency $\mathcal{G}$ & $O(n + E)$ & $E$ = number of edges \\
-Disk Offsets $\mathcal{D}$ & $O(r^2)$ & Precomputed disk mask \\
-\midrule
-\textbf{Total} & $O(H \times W + n + E)$ & Dominated by image arrays \\
-\bottomrule
-\end{tabular}
-\caption{Space complexity breakdown for Multi-Head BFS algorithm}
-\label{tab:space_complexity}
-\end{table}
-
-The visited array can be reused across BFS calls with a reset, or alternatively, a hash set can be used for sparse skeletons to reduce visited storage to $O(P)$.
-
 \section{Frontend and Backend Implementation}
 
 The frontend system has been realized using React.js, Chart.js and relevant packages like react-draggable and KiCad Symbol Library. Likewise, the backend of the \gls{circuitron} system exposes a \gls{restful} \gls{api} that manages the complete lifecycle of circuit simulations. The \gls{api} provides endpoints for submitting \gls{spice} netlists, validating circuit syntax, and executing simulations using different analysis modes such as transient, \gls{ac}, and \gls{dc} analysis. 
 
 Each simulation request is assigned a unique identifier, enabling asynchronous execution and progress tracking through dedicated status endpoints. The \gls{api} also supports retrieval of detailed simulation results, including time-domain voltage and current data, as well as administrative operations such as stopping running simulations, listing historical simulations, and deleting completed or failed runs. Standard \gls{http} status codes and structured \gls{json} responses are used throughout the \gls{api} to ensure consistency, robust error handling, and seamless integration with the frontend application.
 
-\subsection{API Endpoints}
+% \subsection{API Endpoints}
 
-The following table summarizes the key endpoints exposed by the backend \gls{api}:
+% The following table summarizes the key endpoints exposed by the backend \gls{api}:
 
-\begin{table}[H]
-    \centering
-    \caption{Endpoints Used in the Web Application}
-    \label{table:api-endpoints}
-    \footnotesize
-    \setlength{\tabcolsep}{4pt}
-    \begin{tabular}{|p{1.2cm}|p{4cm}|p{4cm}|}
-        \hline
-        \textbf{HTTP Method} & \textbf{Endpoint} & \textbf{Functionality} \\
-        \hline
-        GET & /api/v1/ & Returns basic API information and available documentation links (health check) \\
-        \hline
-        POST & /api/v1/simulation/simulate & Submits a SPICE netlist and initiates a circuit simulation \\
-        \hline
-        POST & /api/v1/simulation/validate & Validates the syntax and structure of a SPICE netlist without running simulation \\
-        \hline
-        GET & /api/v1/simulation/\{simulation\_id\}/status & Retrieves the current status and progress of a specific simulation \\
-        \hline
-        GET & /api/v1/simulation/\{simulation\_id\}/results & Fetches completed simulation results including voltage, current, and time data \\
-        \hline
-        POST & /api/v1/simulation/\{simulation\_id\}/stop & Stops a currently running simulation \\
-        \hline
-        GET & /api/v1/simulation/ & Lists all simulations with their statuses and creation timestamps \\
-        \hline
-        DELETE & /api/v1/simulation/\{simulation\_id\} & Deletes a simulation and its associated results \\
-        \hline
-        GET & /api/v1/docs & Provides interactive Swagger UI for API exploration \\
-        \hline
-        GET & /api/v1/redoc & Provides ReDoc-based API documentation \\
-        \hline
-        GET & /api/v1/openapi.json & Returns OpenAPI specification in JSON format \\
-        \hline
-    \end{tabular}
-\end{table}
+% \begin{table}[H]
+%     \centering
+%     \caption{Endpoints Used in the Web Application}
+%     \label{table:api-endpoints}
+%     \footnotesize
+%     \setlength{\tabcolsep}{4pt}
+%     \begin{tabular}{|p{1.2cm}|p{4cm}|p{4cm}|}
+%         \hline
+%         \textbf{HTTP Method} & \textbf{Endpoint} & \textbf{Functionality} \\
+%         \hline
+%         GET & /api/v1/ & Returns basic API information and available documentation links (health check) \\
+%         \hline
+%         POST & /api/v1/simulation/simulate & Submits a SPICE netlist and initiates a circuit simulation \\
+%         \hline
+%         POST & /api/v1/simulation/validate & Validates the syntax and structure of a SPICE netlist without running simulation \\
+%         \hline
+%         GET & /api/v1/simulation/\{simulation\_id\}/status & Retrieves the current status and progress of a specific simulation \\
+%         \hline
+%         GET & /api/v1/simulation/\{simulation\_id\}/results & Fetches completed simulation results including voltage, current, and time data \\
+%         \hline
+%         POST & /api/v1/simulation/\{simulation\_id\}/stop & Stops a currently running simulation \\
+%         \hline
+%         GET & /api/v1/simulation/ & Lists all simulations with their statuses and creation timestamps \\
+%         \hline
+%         DELETE & /api/v1/simulation/\{simulation\_id\} & Deletes a simulation and its associated results \\
+%         \hline
+%         GET & /api/v1/docs & Provides interactive Swagger UI for API exploration \\
+%         \hline
+%         GET & /api/v1/redoc & Provides ReDoc-based API documentation \\
+%         \hline
+%         GET & /api/v1/openapi.json & Returns OpenAPI specification in JSON format \\
+%         \hline
+%     \end{tabular}
+% \end{table}
+
+
+
 
 \subsection{Frontend-Backend Interaction}
 
