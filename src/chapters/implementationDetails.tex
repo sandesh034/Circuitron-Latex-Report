@@ -177,7 +177,7 @@ First, a pairwise analysis was performed on all junction points identified by th
 
 \begin{algorithm}
 \caption{Wire Classification and Alignment}
-\label{algo:wire-classification}
+\label{algo:wire-classification-impl}
 \begin{algorithmic}
 \Require Set of junctions $J$, angular tolerance $\omega_{\text{tol}} = 18^\circ$, grid size $g = 16$
 \Ensure Set of raw wire segments $S$
@@ -208,7 +208,7 @@ The segments were first separated by orientation (horizontal/vertical) and sorte
 
 \begin{algorithm}
 \caption{Collinear Segment Merging}
-\label{algo:segment-merging}
+\label{algo:segment-merging-impl}
 \begin{algorithmic}
 \Require List of segments $L$, gap tolerance $\omega$
 \Ensure List of merged segments $M$
@@ -237,7 +237,7 @@ The wire–component intersection detection algorithm identifies precise connect
 
 \begin{algorithm}
 \caption{Wire–Component Intersection Detection}
-\label{algo:wire-component-intersection}
+\label{algo:wire-component-intersection-impl}
 \begin{algorithmic}
 \Require Wire segments $W$, \gls{yolo} label file $L$, image width $I_w$, image height $I_h$
 \Ensure Set of intersection points $P$
