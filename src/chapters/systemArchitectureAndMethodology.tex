@@ -4,7 +4,7 @@
 
 The process of converting a handwritten circuit diagram into a structured netlist involves a series of coordinated steps, each step feeding into the next, designed to detect, extract, and represent pictorial information in a machine-readable format and then using this data for simulation and schematic generation.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \fbox{\parbox{0.9\textwidth}{\centering [Block Diagram Placeholder: Preprocessing $\rightarrow$ Detection $\rightarrow$ OCR $\rightarrow$ Wire Detection $\rightarrow$ Netlist $\rightarrow$ Simulation/Schematic]}}
     \caption{Block Diagram of the CIRCUITRON System}
@@ -45,9 +45,9 @@ This allows the model to classify which object exists in each box and once the p
 
 Based on similar fundamental working principle, several iterations (versions) of YOLO have been introduced and popularized among which YOLOv7 is the YOLO model of choice for this project.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \fbox{\parbox{0.9\textwidth}{\centering [Figure Placeholder: YOLOv7 Architecture showing Backbone, Neck, and Head modules]}}
+    \includegraphics[width=\textwidth]{src/images/figures/yolov7_architecture.png}
     \caption{Architecture of YOLOv7}
     \label{fig:yolov7-architecture}
 \end{figure}
@@ -104,9 +104,9 @@ This involves identifying regions within the circuit image that likely contain t
 
 The hand-written text recognition is done using a \gls{crnn}-based \gls{ocr} system, following the design philosophy of Deep Text Recognition Benchmark (DTRB) framework, however minor changes deemed suitable for this project have been made to get the text detection and recognition pipeline.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \fbox{\parbox{0.9\textwidth}{\centering [Figure Placeholder: Text Detection and Recognition Pipeline showing IMAGE $\rightarrow$ YOLO Bounding Box $\rightarrow$ Sort and Crop $\rightarrow$ Resize \& Normalize $\rightarrow$ VGG Feature Extractor $\rightarrow$ BiLSTM Layers $\rightarrow$ Linear Projection $\rightarrow$ Greedy Decoder $\rightarrow$ Post-Process Output]}}
+    \includegraphics[width=\textwidth]{src/images/figures/easyocr_architecture.png}
     \caption{Text Detection and Recognition Pipeline}
     \label{fig:text-recognition-pipeline}
 \end{figure}
@@ -526,9 +526,9 @@ Once the circuit structure is parsed, the system generates an editable schematic
 
 The ``includes'' relationship is used for mandatory sub-tasks like component detection and \gls{ocr}, which must always execute as part of core workflows. The ``extends'' relationship marks optional features like manual corrections or AI Q\&A, which enhance functionality but aren't required for basic operation. The diagram effectively outlines the system's scope, emphasizing its applications (or use-cases).
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \fbox{\parbox{0.9\textwidth}{\centering [Figure Placeholder: Use-Case Diagram for CIRCUITRON System showing User, Upload Image, Preprocess, Detect Components, Extract Text/OCR, Generate Schematic, Manual Correction, Convert to Netlist, Run Simulation, Display Results, and AI Assistant with includes and extends relationships]}}
+     \includegraphics[width=\textwidth]{src/images/figures/use_case_diagram.png}
     \caption{Use-Case Diagram for CIRCUITRON System}
     \label{fig:use-case-diagram}
 \end{figure}
@@ -537,7 +537,7 @@ The ``includes'' relationship is used for mandatory sub-tasks like component det
 
 No model is perfect. No matter how rigorously the models are trained and fine-tuned, there is always room for error due to edge cases like unclear handwriting and similar-looking components. As such, for any project, it is important to define appropriate performance metrics which indicate when the models can be considered ``good-enough'' for the required purpose. Table~\ref{table:performance-metrics} shows the chosen performance metrics and their target values on achieving which, the training may be stopped.
 
-\begin{table}[htbp]
+\begin{table}[H]
     \centering
     \caption{Expected Performance Metric Values for Individual Modules}
     \label{table:performance-metrics}
@@ -764,9 +764,9 @@ While detecting terminals, a method to ensure faulty values are not accepted is 
 
 \section{System Flowchart}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \fbox{\parbox{0.9\textwidth}{\centering [Figure Placeholder: System Flowchart showing Start $\rightarrow$ Authentication $\rightarrow$ Input handwritten image $\rightarrow$ Process image and return editable schematic $\rightarrow$ Update or correction required? $\rightarrow$ Yes: Perform necessary update/correction (loop back) $\rightarrow$ No: Submit for simulation $\rightarrow$ Observe simulation result $\rightarrow$ Need Change? $\rightarrow$ Yes (loop back) $\rightarrow$ No: Save result $\rightarrow$ Stop]}}
+    \includegraphics[width=\textwidth]{src/images/figures/flowchart.png}
     \caption{System Flowchart}
     \label{fig:system-flowchart}
 \end{figure}
@@ -781,7 +781,7 @@ In order to develop the system using the system for automated circuit diagram un
 
 The \gls{cghd} dataset comprises 4.99 GB of annotated data spanning over 3,000 raw images. The data is separated into folders named drafters, going from $-1$ through 31, and each drafter folder contains hand-sketches of 12 unique circuit designs, with each circuit drawn twice and captured under four different conditions (varying angles, lighting, and minor distortions), resulting in up to 96 images per drafter. As is convention, the dataset is to be split into (70-20-10)\% of the entire data for training, validation and testing respectively.
 
-\begin{table}[htbp]
+\begin{table}[H]
     \centering
     \caption{Summary of Data in the CGHD Dataset}
     \label{table:cghd-summary}
@@ -817,7 +817,7 @@ The text annotation coverage is extensive, with labels ranging from single chara
 
 \subsection{Class-wise Data Statistics}
 
-\begin{table}[htbp]
+\begin{table}[H]
     \centering
     \caption{Frequency of Each Class with its Code in the CGHD Dataset}
     \label{table:cghd-classes}
