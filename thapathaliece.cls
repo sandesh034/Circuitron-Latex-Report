@@ -160,19 +160,19 @@
 \newglossarystyle{uniformlist}{%
     \setglossarystyle{long}% base this style on the long style
     \renewenvironment{theglossary}%
-    {\renewcommand{\arraystretch}{1.3}%
+    {\renewcommand{\arraystretch}{1.0}%
         \begin{longtable}{@{}p{0.15\textwidth}p{0.75\textwidth}@{}}}%
             {\end{longtable}}%
     \renewcommand*{\glossaryheader}{}%
     \renewcommand*{\glsgroupheading}[1]{}%
-    \renewcommand*{\glsgroupskip}{}%
+    \renewcommand*{\glsgroupskip}{\relax}%
     \renewcommand{\glossentry}[2]{%
         \glsentryitem{##1}\glstarget{##1}{\glossentryname{##1}} &
-        \glossentrydesc{##1}\tabularnewline[2pt]
+        \glossentrydesc{##1}\tabularnewline
     }%
     \renewcommand*{\subglossentry}[3]{%
         & \glssubentryitem{##2}%
-        \glstarget{##2}{\strut}\glossentrydesc{##2}\tabularnewline[2pt]
+        \glstarget{##2}{\strut}\glossentrydesc{##2}\tabularnewline
     }%
 }
 
@@ -206,7 +206,7 @@
 \RequirePackage[capitalize,noabbrev,nameinlink]{cleveref}
 
 % IEEE-style cleveref configuration
-\crefname{figure}{Fig.}{Figs.}
+\crefname{figure}{Figure}{Figures}
 \Crefname{figure}{Figure}{Figures}
 \crefname{table}{Table}{Tables}
 \Crefname{table}{Table}{Tables}
@@ -256,7 +256,7 @@
 \renewcommand{\contentsname}{TABLE OF CONTENTS}
 \renewcommand{\listfigurename}{LIST OF FIGURES}
 \renewcommand{\listtablename}{LIST OF TABLES}
-\renewcommand{\listalgorithmname}{LIST OF ALGORITHMS}
+% \renewcommand{\listalgorithmname}{LIST OF ALGORITHMS}
 
 % Table formatting - IEEE style with booktabs
 \setlength{\heavyrulewidth}{0.08em}

@@ -15,6 +15,7 @@
 \newacronym{asgi}{ASGI}{Asynchronous Server Gateway Interface}
 \newacronym{bjt}{BJT}{Bipolar Junction Transistor}
 \newacronym{cghd}{CGHD}{Circuit Graph Handwritten Diagrams}
+\newacronym{cer}{CER}{Character Error Rate}
 \newacronym{cli}{CLI}{Command Line Interface}
 \newacronym{cnn}{CNN}{Convolutional Neural Network}
 \newacronym{cpu}{CPU}{Central Processing Unit}
@@ -66,24 +67,3 @@
 \newacronym{ui}{UI}{User Interface}
 \newacronym{vqa}{VQA}{Visual Question Answering}
 \newacronym{yolo}{YOLO}{You Only Look Once}
-
-% Software/Tools - defined as commands (not in abbreviation list)
-% These can still be used with \gls{key} syntax via glsxtrnewsymbol or directly
-\newcommand{\glspython}{Python}
-\newcommand{\glsngspice}{NgSpice}
-\newcommand{\glspyspice}{PySpice}
-\newcommand{\glsltspice}{LTspice}
-\newcommand{\glseasyocr}{EasyOCR}
-\newcommand{\glsrestful}{RESTful}
-\newcommand{\glscircuitron}{Circuitron}
-\newcommand{\glsuk}{UK}
-
-% Redefine \gls for these specific terms to use the commands
-\let\oldgls\gls
-\renewcommand{\gls}[1]{%
-    \ifcsname gls#1\endcsname
-        \csname gls#1\endcsname
-    \else
-        \oldgls{#1}%
-    \fi
-}

@@ -59,7 +59,7 @@ In order to monitor the progress in models' ability to recognize components as t
     \label{fig:map50-95-epochs}
 \end{figure}
 
-It is clear from both \cref{fig:map50-epochs} and \cref{fig:map50-95-epochs} that the \gls{map} scores for \gls{yolo}v7 are significantly better than that for \gls{yolo}v5. Likewise, the loss curves, as shown in the previous figures, demonstrate a steeper curve in the case of YOLOv7.
+It is clear from both \cref{fig:map50-epochs} and \cref{fig:map50-95-epochs} that the \gls{map} scores for \gls{yolo}v7 are significantly better than that for \gls{yolo}v5. Likewise, the loss curves, as shown in \cref{fig:yolov5-loss-curves,fig:yolov7-loss-curves}, demonstrate a steeper curve in the case of YOLOv7.
 
 \subsubsection{Precision, Recall, and F1 Score vs Confidence}
 
@@ -204,13 +204,33 @@ It is to be noted that the ``??'' shown in \cref{fig:ocr-result-1} and \cref{fig
 
 \subsection{Training Loss Curve}
 
-Due to the limitation of unpaid versions of cloud-based services like Google Colab and Lightning \gls{ai}, only 29 training epochs were successfully run. However, the results in those 29 epochs also seem promising as the training loss steadily decreased.
-
+% Due to the limitation of unpaid versions of cloud-based services like Google Colab and Lightning \gls{ai}, only 29 training epochs were successfully run. However, the results in those 29 epochs also seem promising as the training loss steadily decreased.
+\cref{fig:ocr-training-loss} shows that the training loss decreases consistently throughout the 50 epochs, indicating the model is effectively memorizing the training data. However, the validation loss only drops until around 15-20 epochs before gradually increasing, indicating overfitting. Overfitting is an issue to be eradicated using extensive training using diverse datasets (either by addition of other datasets in training and/or augmentation). If the performance is considered satisfactory after training for only 15-20 epochs, early stopping may also be used.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{src/images/figures/OCR_loss_curve.png}
     \caption{Training Loss vs Epochs (\gls{ocr})}
     \label{fig:ocr-training-loss}
+\end{figure}
+
+\subsection{OCR Prediction}
+
+% Due to the limitation of unpaid versions of cloud-based services like Google Colab and Lightning \gls{ai}, only 29 training epochs were successfully run. However, the results in those 29 epochs also seem promising as the training loss steadily decreased.
+The predictions made by the OCR model for a random sample of test data is shown in \cref{fig:ocr-predictions}. The OCR model accurately recognizes the easily discernible text but is fallible in some cases. However, in this random sample of images, all the problem images (i.e. the ones OCR cannot recognize) are indiscernible to human eyes as well. For instance, the input image samples for GT: D5 and GT: 31 are completely black suggesting a preprocessing or cropping bug rather than a fault in the model.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{src/images/figures/ocr_test.png}
+    \caption{OCR Model Predictions}
+    \label{fig:ocr-predictions}
+\end{figure}
+
+\subsection{OCR Performance Analysis}
+\cref{fig:ocr-performance-metrics} is a combination of images showing the performance metrics for the OCR model. The accuracy is 65.96\% and while this may seem low, the sample images reveal that accuracy might have taken a hit due to data corruption in the cropping process or preprocessing. Once this bug is somewhat fixed, accuracy is expected to rise. That being said, to improve the accuracy further, the task of refining the model, regardless of data corruption will continue. Likewise, the CER of 0.25 means that on average, 1 out of every 4 characters is predicted incorrectly. However, the histogram shows a notable bump at 1.0 (complete failure) confirming the presence of "garbage" inputs (like black boxes, as seen in the sample images). WER is shown to be 0.34. Its distribution is inherently binary because the model either gets the full component value right (WER being 0) or gets it wrong (WER = 1).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{src/images/figures/cer_wer.png}
+    \caption{OCR Performance Metrics and their Distributions}
+    \label{fig:ocr-performance-metrics}
 \end{figure}
 
 \section{Junction-Based Wire Detection}
@@ -236,7 +256,7 @@ Morphological skeletonization is applied to the binary image to reduce all wire 
 
 The reduction in foreground pixel count before and after skeletonization is recorded to quantify structural simplification. Despite aggressive thinning, wire continuity and junction connectivity remain intact, making the skeleton suitable for graph-based analysis.
 
-\begin{figure}[htb]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{src/images/figures/skelotonization.png}
     \caption{Skeletonization}

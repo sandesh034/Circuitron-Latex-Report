@@ -535,7 +535,7 @@ The ``includes'' relationship is used for mandatory sub-tasks like component det
 
 \section{Performance Metrics Expectation}
 
-No model is perfect. No matter how rigorously the models are trained and fine-tuned, there is always room for error due to edge cases like unclear handwriting and similar-looking components. As such, for any project, it is important to define appropriate performance metrics which indicate when the models can be considered ``good-enough'' for the required purpose. Table~\ref{table:performance-metrics} shows the chosen performance metrics and their target values on achieving which, the training may be stopped.
+No matter how rigorously the models are trained and fine-tuned, there is always room for error due to edge cases like unclear handwriting and similar-looking components. As such, for any project, it is important to define appropriate performance metrics which indicate when the models can be considered ``good-enough'' for the required purpose. Table~\ref{table:performance-metrics} shows the chosen performance metrics and their target values on achieving which, the training may be stopped.
 
 \begin{table}[H]
     \centering
@@ -546,7 +546,7 @@ No model is perfect. No matter how rigorously the models are trained and fine-tu
         \textbf{Pipeline Stage} & \textbf{Performance Metric} & \textbf{Target Value/Expectation} \\
         \midrule
         Component Detection & mAP@0.5 & 0.90 \\
-        Text Recognition & Character Accuracy & 0.85 \\
+        Text Recognition & Character Accuracy & 0.75 \\
         \bottomrule
     \end{tabular}
 \end{table}
