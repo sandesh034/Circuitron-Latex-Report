@@ -516,6 +516,35 @@ The global intersection set aggregates all wire-box intersections across the com
 
 The detected intersection points serve as terminal connection points in the circuit topology. Each intersection $(x, y) \in \mathcal{I}_{\text{total}}$ indicates a location where a wire connects to a component, enabling the construction of a circuit graph where components are nodes and wires are edges. This representation facilitates subsequent circuit analysis tasks including netlist generation, connectivity verification, and schematic reconstruction.
 
+\section{Line Detection via Path Finding}
+
+This work presents a pipeline for detecting lines in skeletonized circuit images by identifying endpoints and constructing a graph representation using a Multi-Head Breadth-First Search (BFS) algorithm. The methodology consists of two primary stages: endpoint detection from object detection bounding boxes, and graph construction via skeleton traversal.
+
+\subsection{Endpoint Detection}
+
+The endpoint detection strategy differs based on the object class detected by the upstream object detector:
+
+\textbf{Class 1 Objects (Junction Points):} For junction points, a \textbf{single endpoint} is computed by calculating the bounding box center $(x_c, y_c)$ and snapping to the nearest skeleton pixel within an expanded search region (margin = 8 pixels). The closest skeleton point is returned as the endpoint.
+
+\textbf{Class 2+ Objects (Line Segments):} For line segments, \textbf{two endpoints} are computed using bounding box border intersection. Skeleton pixels that lie on or near the bounding box border (within tolerance) are identified. Among these border hits, true topological endpoints (degree = 1) are preferred. The farthest pair of points is selected as the two endpoints.
+
+\subsection{Graph Construction via Multi-Head BFS}
+
+The Multi-Head BFS algorithm constructs a graph where \textbf{nodes} represent detected endpoints and \textbf{edges} represent skeleton connectivity between endpoints.
+
+Each node occupies a disk region of radius $r$ centered at the endpoint. A \texttt{node\_id\_map} is precomputed where each pixel stores:
+\[
+\text{node\_id\_map}[y][x] = 
+\begin{cases}
+i & \text{if pixel is within radius } r \text{ of node } i \\
+-1 & \text{otherwise}
+\end{cases}
+\]
+
+For each source node $i$, all pixels within the source node's disk are marked as visited. The BFS queue is initialized with skeleton pixels at the disk boundary. The algorithm traverses along skeleton pixels using 8-connectivity. When encountering a pixel belonging to another node $j$, the edge $(i, j)$ is recorded and that branch stops. This continues until all reachable skeleton paths are explored.
+
+\textbf{Self-Edge Removal:} After constructing the adjacency graph, edges connecting endpoints that belong to the same detected object (i.e., endpoint pairs from the same bounding box) are removed. This ensures the graph represents only inter-object connections.
+
 \section{Use-Case Diagram}
 
 The use-case diagram in Figure~\ref{fig:use-case-diagram} outlines the CIRCUITRON system's functionality depicting the interactions between users and the system. The primary actor is the user, who can be a student, instructor, or engineer. The system begins with the user uploading a hand-drawn circuit image.
